@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="th">
@@ -6,163 +5,91 @@
 <meta charset="utf-8"/>
 <title>Audit Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-    body {
-      background-color: rgba(188, 189, 207, 0.714);
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .nav-left {
-      display: flex;
-      gap: 10px;
-    }
-    .nav button {
-      background-color: rgb(159, 26, 26);
-      color: rgb(254, 254, 254);
-      border: none;
-      padding: 10px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .nav button.active {
-      background-color: #007bff;
-    }
-    .nav-right img {
-      height: 40px;
-    }
-    .section {
-      display: none;
-      background-color: #ffffff91;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .section.active {
-      display: block;
-    }
-    form {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-    }
-    input, select, button {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #aa1919;
-      font-size: 16px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #c6c5c5;
-    }
-    th {
-      background-color: #ffffff;
-    }
-    tr:nth-child(even) {
-      background-color: #cecccc1e;
-    }
-    .thumbnail {
-      max-width: 100px;
-      cursor: pointer;
-    }
-    #imageModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(255, 255, 255, 0.997);
-      justify-content: center;
-      align-items: center;
-    }
-    #imageModal img {
-      max-width: 90%;
-      max-height: 90%;
-    }
-  
-form input, form select, form button {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid #e2e2e2;
-}
-form input[type="submit"] {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-form input[type="submit"]:hover {
-  background-color: #0056b3;
-}
-</style>
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script> 
+<link rel="stylesheet" href="style.css?v=20251106_1325"> 
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet"> 
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 </head>
 <body>
-<div class="nav">
-<div class="nav-left">
-<button id="btnForm" onclick="showSection('form')">ISSUE</button>
-<button id="btnTable" onclick="showSection('table')">DATA LIST</button>
-<button id="btnChart" onclick="showSection('chart')">SUMMARY</button>
+<div id="loginSection" class="login-box">
+  <img alt="Logo" src="logo.png" style="display:block;margin:auto;width:120px;margin-bottom:20px;"/>
+  <h2>Login</h2>
+  <input id="email" placeholder="Email" type="email"/>
+  <input id="password" placeholder="Password" type="password"/>
+  <button onclick="login()">Login</button>
 </div>
-<div class="nav-right">
-<img alt="Logo" src="image.png"/>
-</div>
-</div>
-<div class="section active" id="form"><h2 style="text-align:center; color:#333; margin-bottom:20px;">Doc Audit Logistic</h2>
-<form id="auditForm" style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: auto;">
-<input id="partNo" placeholder="Part No" required="" type="text"/>
-<input id="partName" placeholder="Part Name" required="" type="text"/>
-<input id="problem" placeholder="Problem" required="" type="text"/>
-<input id="issue" placeholder="Issue" required="" type="text"/>
-<input id="recorder" placeholder="Recorder" required="" type="text"/>
-<input id="causer" placeholder="Causer" required="" type="text"/>
-<select id="docType">
-<option value="Audit LG1">Audit LG1</option>
-<option value="Audit LG2">Audit LG2</option>
-</select>
-<input accept="image/*" id="imageInput" type="file"/>
-<input type="submit" value="Submit"/>
-</form>
-</div>
+
+<div id="mainApp" style="display:none; padding: 20px;">
+  <div class="nav">
+    <div class="nav-left">
+      <button id="btnForm" onclick="showSection('form')" class="active">ISSUE</button> 
+      <button id="btnTable" onclick="showSection('table')">DATA LIST</button>
+      <button id="btnChart" onclick="showSection('chart')">SUMMARY</button>
+    </div>
+    <div class="nav-right">
+      <button onclick="logout()">Logout</button> <img alt="Logo" class="logo" src="image.png"/>
+    </div>
+  </div>
+  
+  <div class="section active" id="form">
+    <h2 style="text-align:center; color:#333; margin-bottom:20px;">Doc Audit Logistic</h2>
+    <form id="auditForm" style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: auto;">
+      <input id="partNo" placeholder="Part No" required="" type="text"/>
+      <input id="partName" placeholder="Part Name" required="" type="text"/>
+      <input id="problem" placeholder="Problem" required="" type="text">
+      <input id="issue" placeholder="Issue" required="" type="text">
+      <input id="recorder" placeholder="Recorder" required="" type="text"/>
+      <input id="causer" placeholder="Causer" required="" type="text"/>
+      <select id="docType">
+        <option value="Audit LG1">Audit LG1</option>
+        <option value="Audit LG2">Audit LG2</option>
+      </select>
+      
+      <label style="font-size: 14px; margin-top: 5px; color: #555;">Image 1 (Optional)</label>
+      <input accept="image/*" id="imageInput1" type="file"/> 
+      <label style="font-size: 14px; margin-top: 5px; color: #555;">Image 2 (Optional)</label>
+      <input accept="image/*" id="imageInput2" type="file"/> 
+      
+      <input type="submit" value="Submit"/>
+    </form>
+  </div>
+
 <div class="section" id="table">
-<select id="sheetSelector" onchange="loadData()">
-<option value="Audit LG1">Audit LG1</option>
-<option value="Audit LG2">Audit LG2</option>
-</select>
-<input id="fromDate" type="date"/>
-<input id="toDate" type="date"/>
-<button onclick="exportToExcel()">Export to Excel</button>
-<table id="auditTable">
-<thead>
-<tr>
-<th>Date</th><th>Part No</th><th>Part Name</th><th>Problem</th><th>Issue</th><th>Recorder</th><th>Causer</th><th>Image</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
+    <select id="sheetSelector" onchange="debouncedLoadData()">
+      <option value="Audit LG1">Audit LG1</option>
+      <option value="Audit LG2">Audit LG2</option>
+    </select>
+    <input id="fromDate" type="date" onchange="debouncedLoadData()"/>
+    <input id="toDate" type="date" onchange="debouncedLoadData()"/>
+    <button onclick="exportToExcel()">Export to Excel</button>
+    <table id="auditTable">
+      <thead>
+        <tr>
+          <th>Date</th><th>Part No</th><th>Part Name</th><th>Problem</th><th>Issue</th><th>Recorder</th><th>Causer</th><th>Image 1</th><th>Image 2</th> </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  
+  <div class="section" id="chart">
+    <input id="chartFromDate" type="date" onchange="loadChartData()"/>
+    <input id="chartToDate" type="date" onchange="loadChartData()"/>
+    
+    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 20px; max-width: 900px; margin-left: auto; margin-right: auto;">
+        <canvas id="problemChartLG1" style="max-width: 45%;"></canvas>
+        <canvas id="problemChartLG2" style="max-width: 45%;"></canvas>
+    </div>
 </div>
-<div class="section" id="chart">
-<input id="chartFromDate" type="date"/>
-<input id="chartToDate" type="date"/>
-<button onclick="loadChartData()">Load Chart</button>
-<canvas id="problemChartLG1"></canvas>
-<canvas id="problemChartLG2"></canvas>
+
+  <div id="toastNotification" class="toast-hidden">
+    ยินดีต้อนรับเข้าสู่ระบบ Doc Audit Logistic!
+  </div>
+
+  <div id="imageModal" onclick="closeModal()">
+    <img id="modalImage"/>
+  </div>
+  <script src="script.js?v=20251106_1325"></script>
 </div>
-<div id="imageModal" onclick="closeModal()">
-<img id="modalImage"/>
-</div>
-<script src="script.js"></script>
 </body>
 </html>
