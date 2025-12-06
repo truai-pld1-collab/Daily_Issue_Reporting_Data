@@ -1,0 +1,441 @@
+/* *** สไตล์หลักและ Global Styles *** */
+body {
+  /* พื้นหลังไล่เฉดสีเทา: อ่อน (บน) -> เข้ม (ล่าง) */
+  background: linear-gradient(to bottom, #f0f2f5, #717780); 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0; 
+  min-height: 100vh;
+}
+
+/* *** สไตล์ Navigation Bar (Nav) *** */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* --- แก้ไข: เปลี่ยนเป็นรูปภาพพื้นหลัง --- */
+  background-image: url('navbar_background.jpg'); /* *** เปลี่ยนชื่อไฟล์รูปภาพของคุณที่นี่ *** */
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, 0.2); 
+  background-blend-mode: overlay; 
+  min-height: 60px; 
+  /* -------------------------------------- */
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  border-radius: 8px; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}
+.nav-left {
+  display: flex;
+  gap: 10px;
+}
+.nav button {
+  background-color: rgb(159, 26, 26);
+  color: rgb(254, 254, 254);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 16px;
+}
+.nav button:hover {
+  background-color: rgb(130, 20, 20);
+}
+.nav button.active {
+  background-color: #007bff;
+}
+.nav-right img {
+  height: 40px;
+}
+/* ปุ่ม Logout */
+.nav-right button { 
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+  font-size: 16px;
+}
+.nav-right button:hover {
+  background-color: #c82333;
+}
+
+/* *** Section Container และ Layout *** */
+.section {
+  display: none;
+  background-color: #ffffff;
+  padding: 30px; 
+  border-radius: 12px; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+  max-width: 1400px; /* เพิ่มความกว้างสูงสุดเป็น 1400px */
+  margin: 0 auto 20px auto;
+}
+.section.active {
+  display: block;
+}
+
+/* *** สไตล์ Login Box *** */
+.login-box {
+  background-color:#1b3d77; 
+  padding:40px;
+  border-radius:10px;
+  max-width:400px;
+  margin:50px auto;
+  color:white;
+  box-shadow:0 0 10px rgba(0, 0, 0, 0.3);
+}
+.login-box input {
+  background-color: rgb(249, 245, 245) !important;
+  color: #333 !important;
+  border: none !important;
+  padding:10px; 
+  margin:10px 0; 
+  border-radius:5px; 
+  font-size:16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.login-box button {
+  background-color:#ffffff !important;
+  border: none !important;
+  font-weight: bold;
+  padding:10px; 
+  margin:10px 0; 
+  border-radius:5px; 
+  font-size:16px;
+  width: 100%;
+}
+.login-box h2 {
+    text-align: center;
+}
+
+/* *** สไตล์ Form Inputs (ISSUE) *** */
+form {
+  gap: 12px; 
+} 
+.section#form form {
+    max-width: 800px; 
+    margin: auto;
+}
+form input, form select, form button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ced4da; 
+  box-sizing: border-box;
+}
+form input[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+form input[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* *** สไตล์ตาราง (DATA LIST) *** */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  table-layout: fixed !important; /* บังคับ Layout ให้แน่นอน */
+}
+th, td {
+  padding: 10px;
+  border: 1px solid #000000;
+  text-align: left;
+  vertical-align: middle; /* จัดกลางในแนวตั้ง */
+  white-space: normal !important; 
+  word-wrap: break-word !important; 
+}
+th {
+  background-color: #ffffff;
+  color: #333;
+  font-weight: bold;
+}
+tr:nth-child(even) {
+  background-color: #e9ecef;
+}
+
+/* *** โค้ดแก้ไขใหม่: กำหนดความกว้างของคอลัมน์ตารางเพื่อความสมดุล *** */
+
+/* กำหนดความกว้างเริ่มต้นให้กับคอลัมน์หลัก */
+#auditTable th:nth-child(1) { width: 9%; }  /* Date */
+#auditTable th:nth-child(2) { width: 10%; }  /* Part No */
+#auditTable th:nth-child(3) { width: 13%; } /* Part Name */
+#auditTable th:nth-child(4) { width: 16%; } /* Problem */
+#auditTable th:nth-child(5) { width: 16%; } /* Issue */
+#auditTable th:nth-child(6) { width: 7%; }  /* Recorder */
+#auditTable th:nth-child(7) { width: 7%; }  /* Causer */
+
+/* Image 1, Image 2, Action จะได้พื้นที่คงที่ 120px */
+table td:nth-child(8), /* คอลัมน์ Image 1 */
+table th:nth-child(8),
+table td:nth-child(9), /* คอลัมน์ Image 2 */
+table th:nth-child(9),
+table td:nth-child(10), /* คอลัมน์ Action */
+table th:nth-child(10)
+{
+    width: 120px !important;      /* *** แก้ไข: ขยายความกว้างคอลัมน์เป็น 120px *** */
+    max-width: 120px !important;
+    min-width: 120px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important; 
+    text-align: center !important;
+}
+
+/* *** สไตล์ใหม่สำหรับปุ่มลบ (ขนาดเล็กลง) *** */
+.delete-btn {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border: none !important;
+    padding: 4px 8px !important; 
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    transition: background-color 0.3s;
+    width: 65px; 
+    box-sizing: border-box;
+}
+
+.delete-btn:hover {
+    background-color: #c82333 !important;
+}
+
+/* Input/Select/Button เหนือตาราง */
+.table-controls { 
+    display: flex;
+    flex-wrap: wrap; 
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+    gap: 10px; 
+}
+
+.section#table select {
+    min-width: 120px; 
+}
+.section#table input[type="date"] {
+    min-width: 140px; 
+}
+
+.section#table select,
+.section#table input[type="date"],
+.section#table button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 16px;
+}
+.section#table button {
+    background-color: #dc3545; 
+    color: white;
+    font-weight: 600;
+}
+.section#table button:hover {
+    background-color: #c82333;
+}
+
+/* *** สไตล์ Pie Chart และ Image Modal *** */
+canvas {
+  max-width: 400px; 
+  height: auto;
+}
+.thumbnail {
+  /* โค้ดที่จำกัดขนาดรูปภาพ */
+  max-width: 110px !important;      /* *** แก้ไข: ขยายขนาดเป็น 110px *** */
+  max-height: 110px !important;     /* *** แก้ไข: ขยายขนาดเป็น 110px *** */
+  width: auto !important;          
+  height: auto !important;         
+  object-fit: contain !important;  
+  cursor: pointer !important;
+  border: 1px solid #e0e2e5 !important; 
+  padding: 2px !important;
+  border-radius: 4px !important;
+  vertical-align: middle !important; 
+}
+/* *** เพิ่ม Hover effect ให้รู้ว่าคลิกได้ *** */
+.thumbnail:hover {
+    border: 2px solid #007bff !important; 
+    transform: scale(1.03); /* ลดการขยายเล็กน้อยเพื่อไม่ให้ล้น */
+    transition: all 0.2s;
+}
+#imageModal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+#imageModal img {
+  max-width: 90%;
+  max-height: 90%;
+  border: 5px solid white;
+}
+/* *** สไตล์สำหรับ h2 ใน Form (Doc Audit Logistic) *** */
+.section#form h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #0a60d0;
+  text-align: center;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e2e5;
+}
+
+/* *** สไตล์สำหรับ Toast Notification *** */
+#toastNotification {
+  visibility: hidden; 
+  min-width: 250px;
+  background-color: #28a745; 
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1100;
+  right: 20px;
+  bottom: 30px;
+  font-size: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s ease-in-out;
+}
+
+/* คลาสสำหรับการแสดงผล */
+.toast-visible {
+  visibility: visible !important;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* คลาสสำหรับการซ่อน */
+.toast-hidden {
+  visibility: hidden !important;
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+/* Keyframes สำหรับ Animation */
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;} 
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;} 
+  to {bottom: 0; opacity: 0;}
+}
+
+/* *** สไตล์สำหรับหน้า Summary แบบการ์ด (เพิ่มใหม่) *** */
+.charts-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.audit-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  padding: 20px;
+  width: 320px; /* ความกว้างการ์ด */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  transition: transform 0.2s;
+}
+
+.audit-card:hover {
+  transform: translateY(-5px); /* ขยับขึ้นเล็กน้อยเมื่อเอาเมาส์ชี้ */
+}
+
+.audit-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+  border-bottom: 2px solid #f0f2f5;
+  padding-bottom: 10px;
+}
+
+/* แก้ไข: เพิ่ม image-rendering เพื่อลดอาการภาพแตก */
+/* แก้ไขเฉพาะส่วนรูปภาพบุคคล ให้ copy ไปทับอันเดิมที่มีปัญหาครับ */
+.audit-person-img {
+  width: 100px;          /* ขยายขนาดให้ใหญ่ขึ้นอีกนิด */
+  height: 100px;         /* ต้องเท่ากับ width เพื่อให้เป็นวงกลม */
+  border-radius: 50%;    /* ทำเป็นวงกลม */
+  object-fit: cover;     /* สำคัญมาก! ช่วยตัดส่วนเกินออกแทนการบีบรูปจนเบี้ยว */
+  border: 4px solid #007bff; 
+  margin-bottom: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+  
+  /* ลบคำสั่ง image-rendering ออกครับ เพราะบางทีทำให้รูปถ่ายดูแตกเป็นเม็ด */
+}
+
+.audit-title {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333;
+  margin-top: 5px;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 300px;
+  width: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* *** เพิ่มสไตล์สำหรับปุ่มเปลี่ยนหน้า (Pagination) *** */
+.pagination-container {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    align-items: center;
+}
+
+.pagination-container button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    min-width: 100px;
+    transition: background-color 0.2s;
+}
+
+.pagination-container button:hover {
+    background-color: #0056b3;
+}
+
+.pagination-container button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+#pageIndicator {
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+}

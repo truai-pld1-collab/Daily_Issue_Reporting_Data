@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<title>Audit Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script> 
+<link rel="stylesheet" href="style.css?v=9999"> 
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet"> 
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+</head>
+<body>
+
+<div id="loginSection" class="login-box">
+  <img alt="Logo" src="logo.png" style="display:block;margin:auto;width:120px;margin-bottom:20px;"/>
+  <h2>Login</h2>
+  <input id="email" placeholder="Email" type="email"/>
+  <input id="password" placeholder="Password" type="password"/>
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="mainApp" style="display:none; padding: 20px;">
+  <div class="nav">
+    <div class="nav-left">
+      <button id="btnForm" onclick="showSection('form')" class="active">ISSUE</button> 
+      <button id="btnTable" onclick="showSection('table')">DATA LIST</button>
+      <button id="btnChart" onclick="showSection('chart')">SUMMARY</button>
+    </div>
+    <div class="nav-right">
+      <button onclick="logout()">Logout</button> <img alt="Logo" class="logo" src="image.png"/>
+    </div>
+  </div>
+  
+  <div class="section active" id="form">
+    <img alt="Logo" src="logo.png" style="display:block;margin:auto;width:250px;margin-bottom:20px;"/>
+    <form id="auditForm" style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: auto;">
+      <input id="partNo" placeholder="Part No" required="" type="text"/>
+      <input id="partName" placeholder="Part Name" required="" type="text"/>
+      
+      <select id="problem" required="">
+        <option value="" disabled selected>--- กรุณาเลือกปัญหา (Problem) ---</option>
+        <option value="TAG ไม่ตรง">1. TAG ไม่ตรง</option>
+        <option value="จำนวนชิ้นส่วนไม่ครบ">2. จำนวนชิ้นส่วนไม่ครบ</option>
+        <option value="ชิ้นส่วนไม่ตรงตามแผนจัดส่ง">3. ชิ้นส่วนไม่ตรงตามแผนจัดส่ง</option>
+        <option value="ชิ้นส่วนผสมในพาเลท/box">4. ชิ้นส่วนผสมในพาเลท/box</option>
+        <option value="สนิม">5. สนิม</option>
+        <option value="พาเลทชำรุด">6. พาเลทชำรุด</option>
+        <option value="อื่นๆ">7. อื่นๆ</option>
+      </select>
+      <input id="issue" placeholder="Issue" required="" type="text">
+      <input id="recorder" placeholder="Recorder" required="" type="text"/>
+      <input id="causer" placeholder="Causer" required="" type="text"/>
+      
+      <select id="docType">
+        <option value="Audit LG1">Store LG1</option>
+        <option value="Audit LG2">Store LG2</option>
+        <option value="Audit S1">Store S1</option>
+        <option value="Audit S2">Store S2</option>
+        <option value="Audit SP">Store SP</option>
+      </select>
+      
+      <label style="font-size: 14px; margin-top: 5px; color: #555;">Image 1 (Optional)</label>
+      <input accept="image/*" id="imageInput1" type="file"/> 
+      <label style="font-size: 14px; margin-top: 5px; color: #555;">Image 2 (Optional)</label>
+      <input accept="image/*" id="imageInput2" type="file"/> 
+      
+      <input type="submit" value="Submit"/>
+    </form>
+  </div>
+
+  <div class="section" id="table">
+    <div class="table-controls">
+        <select id="sheetSelector" onchange="debouncedLoadData()">
+          <option value="Audit LG1">Store LG1</option>
+          <option value="Audit LG2">Store LG2</option>
+          <option value="Audit S1">Store S1</option>
+          <option value="Audit S2">Store S2</option>
+          <option value="Audit SP">Store SP</option>
+        </select>
+        <input id="fromDate" type="date" onchange="debouncedLoadData()"/>
+        <input id="toDate" type="date" onchange="debouncedLoadData()"/>
+        <button onclick="exportToExcel()">Export to Excel</button>
+    </div>
+    <table id="auditTable">
+      <thead>
+        <tr>
+          <th>Date</th><th>Part No</th><th>Part Name</th><th>Problem</th><th>Issue</th><th>Recorder</th><th>Causer</th><th>Image 1</th><th>Image 2</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="pagination-container">
+        <button id="btnPrev" onclick="changePage(-1)">Previous</button>
+        <span id="pageIndicator">Page 1</span>
+        <button id="btnNext" onclick="changePage(1)">Next</button>
+    </div>
+  </div>
+  
+  <div class="section" id="chart">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <input id="chartFromDate" type="date" onchange="loadChartData()"/>
+        <input id="chartToDate" type="date" onchange="loadChartData()"/>
+    </div>
+    
+    <div class="charts-container">
+        <div class="audit-card">
+            <div class="audit-header">
+                <img src="person_lg1.png" alt="LG1" class="audit-person-img" onerror="this.src='https://via.placeholder.com/100'">
+                <div class="audit-title">Store LG1</div>
+            </div>
+            <div class="chart-wrapper"><canvas id="problemChartLG1"></canvas></div>
+        </div>
+
+        <div class="audit-card">
+            <div class="audit-header">
+                <img src="person_lg2.png" alt="LG2" class="audit-person-img" onerror="this.src='https://via.placeholder.com/100'">
+                <div class="audit-title">Store LG2</div>
+            </div>
+            <div class="chart-wrapper"><canvas id="problemChartLG2"></canvas></div>
+        </div>
+
+        <div class="audit-card">
+            <div class="audit-header">
+                <img src="person_s1.png" alt="S1" class="audit-person-img" onerror="this.src='https://via.placeholder.com/100'">
+                <div class="audit-title">Store S1</div>
+            </div>
+            <div class="chart-wrapper"><canvas id="problemChartS1"></canvas></div>
+        </div>
+
+        <div class="audit-card">
+            <div class="audit-header">
+                <img src="person_s2.png" alt="S2" class="audit-person-img" onerror="this.src='https://via.placeholder.com/100'">
+                <div class="audit-title">Store S2</div>
+            </div>
+            <div class="chart-wrapper"><canvas id="problemChartS2"></canvas></div>
+        </div>
+
+        <div class="audit-card">
+            <div class="audit-header">
+                <img src="person_sp.png" alt="SP" class="audit-person-img" onerror="this.src='https://via.placeholder.com/100'">
+                <div class="audit-title">Store SP</div>
+            </div>
+            <div class="chart-wrapper"><canvas id="problemChartSP"></canvas></div>
+        </div>
+    </div>
+
+<div style="margin-top: 50px; max-width: 900px; margin-left: auto; margin-right: auto; padding-bottom: 30px;">
+        <h3 style="text-align: center; color: #333; font-family: 'Montserrat', sans-serif; font-size: 1.5em; margin-bottom: 20px;">
+            🏆 สรุปอันดับปัญหาที่พบ (Problem Ranking)
+        </h3>
+        <table id="summaryRankingTable" style="width: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; border-collapse: collapse;">
+            <thead style="background-color: #007bff; color: white;">
+                <tr>
+                    <th style="padding: 15px; text-align: center; width: 15%; font-weight: bold; border-bottom: 2px solid #0056b3;">ลำดับ</th>
+                    <th style="padding: 15px; text-align: left; font-weight: bold; border-bottom: 2px solid #0056b3;">รายละเอียดปัญหา</th>
+                    <th style="padding: 15px; text-align: center; width: 20%; font-weight: bold; border-bottom: 2px solid #0056b3;">จำนวน (ครั้ง)</th>
+                    <th style="padding: 15px; text-align: center; width: 25%; font-weight: bold; border-bottom: 2px solid #0056b3;">คิดเป็น (%)</th>
+                </tr>
+            </thead>
+            <tbody style="background-color: white;">
+                </tbody>
+        </table>
+    </div>
+
+  <div id="toastNotification" class="toast-hidden">
+    เข้าสู่ระบบเรียบร้อย!
+  </div>
+
+  <div id="imageModal" onclick="closeModal()">
+    <div style="position: relative; max-width: 90%; max-height: 90%; display: flex; justify-content: center; align-items: center;">
+      <img id="modalImage"/>
+      <a id="fullSizeLink" href="#" target="_blank" onclick="event.stopPropagation()" 
+         style="position: absolute; bottom: 20px; right: 20px; background-color: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; font-size: 14px; z-index: 10;">
+        Open Full Size
+      </a>
+    </div>
+  </div>
+
+  <script src="script.js?v=9999"></script>
+</div>
+</body>
+</html>
